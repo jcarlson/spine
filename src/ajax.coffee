@@ -66,13 +66,15 @@ class Collection extends Base
     record = new @model(id: id)
     @queue params, {
         type: 'GET',
-        url:  Ajax.getURL(record)
+        url:  Ajax.getURL(record),
+        parallel: true
       }, [@recordsResponse, success], [@errorResponse]
 
   all: (params, success = ->) ->
     @queue params, {
         type: 'GET',
-        url:  Ajax.getURL(@model)
+        url:  Ajax.getURL(@model),
+        parallel: true
       }, [@recordsResponse, success], [@errorResponse]
 
   fetch: (params = {}, options = {}) ->
