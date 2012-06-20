@@ -41,7 +41,7 @@ Ajax =
     if @pending
       @requests.push(request)
     else
-      @pending = true
+      @pending = true unless request.params.type == 'GET' and request.params.parallel
       @request(request)
     request
 
