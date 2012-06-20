@@ -35,7 +35,8 @@ describe("Ajax", function(){
       contentType:  'application/json',
       dataType:     'json',
       url:          '/users',
-      processData:  false
+      processData:  false,
+      parallel:     true
     });
   });
 
@@ -52,7 +53,8 @@ describe("Ajax", function(){
       contentType:  'application/json',
       dataType:     'json',
       url:          '/users/IDD',
-      processData:  false
+      processData:  false,
+      parallel:     true
     });
   });
 
@@ -149,10 +151,10 @@ describe("Ajax", function(){
     it("should send GET requests in parallel", function() {
         spyOn(jQuery, "ajax").andReturn(jqXHR);
         
-        User.fetch({parallel: true});
+        User.fetch();
         expect(jQuery.ajax).toHaveBeenCalled();
         
-        User.fetch({parallel: true});
+        User.fetch();
         expect(jQuery.ajax.calls.length).toEqual(2);
     });
 
