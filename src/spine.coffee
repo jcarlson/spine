@@ -381,6 +381,12 @@ class Model extends Module
     @trigger('refresh')
     @
 
+  fetch: (callbackOrParams) ->
+    if typeof callbackOrParams is 'function'
+      @bind('fetch', callbackOrParams)
+    else
+      @trigger('fetch', arguments...)
+
   toJSON: ->
     @attributes()
 
