@@ -238,11 +238,13 @@ class Model extends Module
     else
       @trigger('change', arguments...)
 
-  @fetch: (callbackOrParams) ->
+  @fetch: (callbackOrParams, options={}) ->
     if typeof callbackOrParams is 'function'
       @bind('fetch', callbackOrParams)
     else
-      @trigger('fetch', arguments...)
+      new Promise (resolve, reject) =>
+        options = $.extend({}, options, { reject, resolve })
+        @trigger('fetch', callbackOrParams, options)
 
   @toJSON: ->
     @records
@@ -618,6 +620,13 @@ createObject = Object.create or (o) ->
   Func.prototype = o
   new Func()
 
+# Use native Promises if available, otherwise use adapter for jQuery's Deferred
+Promise = window.Promise or class
+  constructor: (resolver) ->
+    dfd = new $.Deferred()
+    resolver( ( -> dfd.resolve(arguments...)), ( -> dfd.reject(arguments...)) )
+    return dfd.promise()
+
 isArray = (value) ->
   Object::toString.call(value) is '[object Array]'
 
@@ -643,6 +652,7 @@ Spine.Log        = Log
 Spine.Module     = Module
 Spine.Controller = Controller
 Spine.Model      = Model
+Spine.Promise    = Promise
 
 # Global events
 
