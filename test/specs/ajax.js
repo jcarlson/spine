@@ -458,7 +458,7 @@ describe("Ajax", function(){
 
     runs(function(){
       promise = User.fetch();
-      promise.catch(failSpy);
+      promise.then(null, failSpy);
       expect(failSpy).not.toHaveBeenCalled(); // promise has not yet been fulfilled
     });
 
@@ -471,8 +471,8 @@ describe("Ajax", function(){
     }, "Promise should have been rejected", 50);
 
     runs(function(){
-      var error = ajaxSpy.mostRecentCall.args[1]
-      expect(failSpy).toHaveBeenCalledWith(error);
+      var xhr = ajaxSpy.mostRecentCall.args[1]
+      expect(failSpy).toHaveBeenCalledWith(xhr);
     });
 
   });
@@ -487,7 +487,7 @@ describe("Ajax", function(){
 
     runs(function(){
       promise = User.fetch({ id: 123 });
-      promise.catch(failSpy);
+      promise.then(null, failSpy);
       expect(failSpy).not.toHaveBeenCalled(); // promise has not yet been fulfilled
     });
 
@@ -500,8 +500,8 @@ describe("Ajax", function(){
     }, "Promise should have been rejected", 50);
 
     runs(function(){
-      var error = ajaxSpy.mostRecentCall.args[1]
-      expect(failSpy).toHaveBeenCalledWith(error);
+      var xhr = ajaxSpy.mostRecentCall.args[1]
+      expect(failSpy).toHaveBeenCalledWith(xhr);
     });
   });
 

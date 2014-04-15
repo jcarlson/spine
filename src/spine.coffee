@@ -623,9 +623,12 @@ createObject = Object.create or (o) ->
 # Use native Promises if available, otherwise use adapter for jQuery's Deferred
 Promise = window.Promise or class
   constructor: (resolver) ->
-    dfd = new $.Deferred()
-    resolver( ( -> dfd.resolve(arguments...)), ( -> dfd.reject(arguments...)) )
-    return dfd.promise()
+    @dfd = new $.Deferred()
+    resolver( ( (result) => @dfd.resolve(result)), ( (error) => @dfd.reject(error)) )
+
+  then: =>
+    @dfd.then(arguments...)
+    this
 
 isArray = (value) ->
   Object::toString.call(value) is '[object Array]'
