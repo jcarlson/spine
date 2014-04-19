@@ -242,7 +242,7 @@ class Model extends Module
     if typeof callbackOrParams is 'function'
       @bind('fetch', callbackOrParams)
     else
-      new Promise (resolve, reject) =>
+      new Spine.Promise (resolve, reject) =>
         options = $.extend({}, options, { reject, resolve })
         @trigger('fetch', callbackOrParams, options)
 
@@ -611,6 +611,24 @@ class Controller extends Module
     @refreshElements()
     @el
 
+
+class JQueryPromise
+
+  @resolve: (result) ->
+    new JQueryPromise (resolve) -> resolve(result)
+
+  @reject: (error) ->
+    new JQueryPromise (_, reject) -> reject(error)
+
+  constructor: (fn) ->
+    deferred = new $.Deferred()
+    resolve = (result) -> deferred.resolve(result)
+    reject = (error) -> deferred.reject(error)
+    fn(resolve, reject)
+    return deferred.promise()
+
+
+
 # Utilities & Shims
 
 $ = window?.jQuery or window?.Zepto or (element) -> element
@@ -619,16 +637,6 @@ createObject = Object.create or (o) ->
   Func = ->
   Func.prototype = o
   new Func()
-
-# Use native Promises if available, otherwise use adapter for jQuery's Deferred
-Promise = window.Promise or class
-  constructor: (resolver) ->
-    @dfd = new $.Deferred()
-    resolver( ( (result) => @dfd.resolve(result)), ( (error) => @dfd.reject(error)) )
-
-  then: =>
-    @dfd.then(arguments...)
-    this
 
 isArray = (value) ->
   Object::toString.call(value) is '[object Array]'
@@ -655,7 +663,7 @@ Spine.Log        = Log
 Spine.Module     = Module
 Spine.Controller = Controller
 Spine.Model      = Model
-Spine.Promise    = Promise
+Spine.Promise    = JQueryPromise
 
 # Global events
 
