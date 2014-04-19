@@ -612,21 +612,18 @@ class Controller extends Module
     @el
 
 
-class JQueryPromise
+JQueryPromise = (fn) ->
+  deferred = new $.Deferred()
+  resolve = (result) -> deferred.resolve(result)
+  reject = (error) -> deferred.reject(error)
+  fn(resolve, reject)
+  deferred.promise()
 
-  @resolve: (result) ->
-    new JQueryPromise (resolve) -> resolve(result)
+JQueryPromise.resolve = (result) ->
+  JQueryPromise (resolve) -> resolve(result)
 
-  @reject: (error) ->
-    new JQueryPromise (_, reject) -> reject(error)
-
-  constructor: (fn) ->
-    deferred = new $.Deferred()
-    resolve = (result) -> deferred.resolve(result)
-    reject = (error) -> deferred.reject(error)
-    fn(resolve, reject)
-    return deferred.promise()
-
+JQueryPromise.reject = (error) ->
+  JQueryPromise (_, reject) -> reject(error)
 
 
 # Utilities & Shims
